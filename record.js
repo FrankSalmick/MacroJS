@@ -3,6 +3,7 @@ const readline = require('readline-sync');
 const fs = require('fs');
 const configFilename = "./record-config.txt";
 const textColor = "\x1b[37m";
+var lastAction;
 // ctrl shift g
 var stopKeybind = [29, 42, 34];
 
@@ -88,6 +89,7 @@ var mainMenu = {
         }
     },
     "Record now": () => {
+        fs.unlinkSync("playbackfile.txt");
         io.registerShortcut(stopKeybind, () => {
             io.stop();
             process.exit();
@@ -96,7 +98,15 @@ var mainMenu = {
             console.log("Binding to " + value);
             io.on(value, data => {
                 if (options[value]) {
-                    fs.appendFile('./playbackfile.txt', JSON.stringify(data) + "\n", (err) => { console.log(err); });
+                    if (lastAction == undefined) {
+                        lastAction = new Date();
+                    }
+                    else {
+                        var newDate = new Date();
+                        fs.appendFileSync('./playbackfile.txt', JSON.stringify({type: "wait", ms: newDate - lastAction}) + "\n");
+                        lastAction = newDate;
+                    }
+                    fs.appendFileSync('./playbackfile.txt', JSON.stringify(data) + "\n");
                 }
             })
         });

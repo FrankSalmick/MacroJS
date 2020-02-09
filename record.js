@@ -3,12 +3,17 @@ const readline = require('readline-sync');
 const fs = require('fs');
 const configFilename = "./record-config.txt";
 const textColor = "\x1b[37m";
+var dirtyData = false;
+var recording = false;
 var lastAction;
+
 // ctrl shift g
+// todo hardcoded
 var stopKeybind = [29, 42, 34];
 
+// todo support more
 var options = {
-    "mouseclick": true,
+    "mouseup": true,
     "keyup": true
 };
 
@@ -34,6 +39,7 @@ var mainMenu = {
                     matchesExactly = false;
                 }
             });
+            // Note, this is a function definition, this code isn't called here. It's called slightly lower in the if/else 
             var mergeConfigs = function () {
                 // We could just do options = JSON.parse(diskConfig), 
                 // but instead we iterate over diskConfig so that we don't *lose* items in our config (which will probably cause problems down the road)
@@ -57,6 +63,7 @@ var mainMenu = {
                         "Merge configs, favoring values present on disk": [mergeConfigs, false],
                         "Cancel loading (do not merge, use only values in memory)": [() => {
                             printError("File load aborted by user.");
+                            dirtyData = true;
                         }, false]
                     }
                     var choice = printMenu(mergeChoices);
@@ -89,32 +96,45 @@ var mainMenu = {
         }
     },
     "Record now": () => {
-        fs.unlinkSync("playbackfile.txt");
+        // Todo: Configurable/multiple recording files
+        if (fs.existsSync("playbackfile.txt")) {
+            fs.unlinkSync("playbackfile.txt");
+        }
         io.registerShortcut(stopKeybind, () => {
             io.stop();
             process.exit();
         });
         Object.keys(options).forEach(value => {
-            console.log("Binding to " + value);
-            io.on(value, data => {
-                if (options[value]) {
+            if (options[value]) {
+                console.log("Binding to " + value);
+                io.on(value, data => {
+                    if (!recording) return;
                     if (lastAction == undefined) {
                         lastAction = new Date();
                     }
                     else {
                         var newDate = new Date();
-                        fs.appendFileSync('./playbackfile.txt', JSON.stringify({type: "wait", ms: newDate - lastAction}) + "\n");
-                        lastAction = newDate;
+                        // Needs to be blocking so that actions don't start appearing out of order
+                        var ms = (newDate - lastAction);
+                        var waitObj = {type: "wait", ms: ms}
+                        fs.appendFileSync('./playbackfile.txt', JSON.stringify(waitObj) + "\n");
+                        console.log(waitObj);
+                        // we don't use newDate in case it took a long time to write the file for some reason
+                        lastAction = new Date();
                     }
+                    console.log(data);
                     fs.appendFileSync('./playbackfile.txt', JSON.stringify(data) + "\n");
-                }
-            })
+                })
+            } else {
+                console.log(value + " is disabled in config.");
+            }
         });
+        recording = true;
         io.start();
-        console.log("Use ctrl+shift+g to stop recording.");
-    },
+        console.log("Use ctrl+shift+g to stop recording. Your first click will not be recorded, so that you can re-focus windows.");
+   },
     "Quit": () => {
-        console.log("You can also use ctrl+c any time.");
+        console.log("You can also use ctrl+c any time (recordings will be saved if mid-record)");
         process.exit();
     }
 }
@@ -122,7 +142,6 @@ var mainMenu = {
 function main() {
     // Make the text white (I like it more that way)
     console.log(textColor);
-    var dirtyData = false;
 
     mainMenu["Reload config"]();
     mainMenu["Show config"]();
@@ -131,9 +150,9 @@ function main() {
     while (choice != "Record now") {
         printLogo();
         if (dirtyData) {
-            printError("Config has not been saved.");
+            printError("The current config will apply for this session only, save it to disk to make it permanant.");
         }
-        var choice = printMenu(mainMenu);
+        choice = printMenu(mainMenu);
         mainMenu[choice]();
     } 
 }
@@ -159,6 +178,14 @@ function printColorLine(message) {
     printColor(message + "\n");
 }
 
+/* menu is an object that typically looks like this:
+{
+    "Option one": () => { // code to run when the user selects this option },
+    "Option two": () => { // code to run when the user selects this option },
+    ...
+}
+The keys can be any stringable object, and the values can be anything you want. This function does not consider the values, it just returns the user's selection
+*/
 function printMenu(menu) {
     while (1) {
         var keys = Object.keys(menu);

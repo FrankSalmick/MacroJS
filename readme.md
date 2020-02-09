@@ -1,7 +1,7 @@
 # MacroJS
 MacroJS is a CLI-based macro recorder/player. It's written in NodeJS and is cross-platform.
 
-You will need the following packages:
+You will need the following npm packages:
 
 - `readline-sync`
 - `iohook` (so the recorder can listen to inputs)

@@ -8,3 +8,9 @@ You will need the following npm packages:
 - `robotjs` (so the player can play your inputs)
 
 MacroJS is still a WIP.
+
+# Usage
+
+- `node record.js` to record a macro
+- `node playback.js` to playback a macros
+- `npm start` to start the advanced macro editor

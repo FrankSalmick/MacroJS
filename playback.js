@@ -2,7 +2,7 @@ const r = require('robotjs');
 const fs = require('fs');
 const buttons = ["", "left", "right"];
 // todo user configurable 
-var maxPlayback = 5;
+var maxPlayback = 20;
 
 function handleClick(command) {
     r.moveMouse(command['x'], command['y']);
@@ -26,8 +26,12 @@ var input = fs.readFileSync('./playbackfile.txt');
 input = input.toString().split("\n");
 for (var i = 0; i < input.length; i++) {
     try {
-        input[i] = JSON.parse(input[i]);
-    } catch (e) {}
+        var temp = JSON.parse(input[i]);
+        input[i] = temp;
+    } catch (e) {
+        input.splice(i);
+        i--;
+    }
 }
 
 // The file is in the form

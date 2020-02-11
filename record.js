@@ -15,6 +15,7 @@ var stopKeybind = [29, 42, 34];
 var options = {
     "mouseup": true,
     "keyup": true
+    // wait: true (forced)
 };
 
 var mainMenu = {

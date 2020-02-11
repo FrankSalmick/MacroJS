@@ -2,7 +2,7 @@
   "name": "macrojs",
   "version": "1.0.0",
   "description": "Create, modify, and play back macros",
-  "main": "main.js",
+  "main": "editor.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/FrankSalmick/MacroJS.git"
@@ -11,9 +11,13 @@
     "url": "https://github.com/FrankSalmick/MacroJS/issues"
   },
   "homepage": "https://github.com/FrankSalmick/MacroJS#readme",
+  "scripts": {
+    "start": "electron ."
+  },
   "dependencies": {
-    "iohook": "^0.6.5",
-    "readline-sync": "^1.4.10",
-    "robotjs": "^0.6.0"
+    "jquery": "^3.4.1"
+  },
+  "devDependencies": {
+    "electron": "^8.0.0"
   }
 }

@@ -1,0 +1,60 @@
+<!--
+    Todo:
+    - Save to file
+    - Save changes to JSON string
+    - Image editing
+    - Change type/default string to use
+-->
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <span id="header">
+        Script editor <span id="dirty-data">- Unsaved, click to save</span>
+    </span>
+    <hr />
+    <div id="content"></div>
+    <div id="event-templates">
+        <!-- 
+            Note: Although the event IDs are assigned chronologically, there is no guarantee they will stay that way (the user can re-order them).
+            Traverse #content to find the order that the user has assigned them
+            Additionally, there is no gaurntee they are contiguous 
+            Example: there may be events 1, 2, 5, 3
+        -->
+        <div data-event-id class="event event-mouseup">
+            <div class="event-options">
+            </div>
+        </div>
+        <div class="event event-wait">
+            <div class="event-options"></div>
+        </div>
+        <div class="event event-pixelmatch">
+            <div class="event-options"></div>
+        </div>
+        <div class="event event-regionmatch">
+            <div class="event-options"></div>
+        </div>
+        <div class="event event-keyup">
+            <div class="event-options"></div>
+        </div>
+        <div class="event event-blank">
+            <div class="event-options"></div>
+        </div>
+        <span class="event-details"></span>
+        <span class="event-options-header">
+            <textarea rows="10" cols="80" class="event-raw"></textarea><br>
+        </span>
+        <span class="event-footer">
+            <span class="event-delete">
+                Delete event
+            </span>
+             | 
+            <span class="event-save">
+                Save event
+            </span>
+        </span>
+    </div>
+    <script src="editor-client.js"></script>
+</body>
+</html>

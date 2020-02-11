@@ -1,0 +1,43 @@
+body {
+    font-size: 2em;
+}
+
+.header {
+    font-size: 1.25em;
+}
+
+#dirty-data {
+    display:none;
+}
+
+.event-delete {
+    color:red;
+    cursor: pointer;
+}
+
+.event-save {
+    color:green;
+    cursor: pointer;
+}
+
+.event-details {
+    /* text-decoration: underline; */
+    cursor: pointer;
+}
+
+.event-raw {
+    font-size: 1.25em;
+}
+
+.event-options {
+    text-decoration: none !important;
+    display:none;
+}
+
+.event {
+    width: 100%;
+}
+
+#event-templates {
+    display: none;
+}

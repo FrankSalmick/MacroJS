@@ -71,12 +71,10 @@ function main() {
     });
     // Ingest the data
     recordingData = fs.readFileSync("playbackfile.txt").toString().split("\n");
-    for (var i = 0; i <= 2; i++) {
+    for (var i = 0; i <= recordingData.length; i++) {
         try {
             record = JSON.parse(recordingData[i]);
         } catch (e) {
-            recordingData.splice(i);
-            i--;
             continue;
         }
         events[i.toString()] = record;

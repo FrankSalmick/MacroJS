@@ -65,34 +65,26 @@ function getFilledInTemplate(eventData) {
             clone.find(".event-details").first().text("Matched a region");
             var imageSize = imgSize('example.png');
             var image = clone.find(".event-screenshot")[0];
-            $(image).attr("height", imageSize.height);
-            $(image).attr("width", imageSize.width);
-            $(image).attr("src", "example.png");
+            $(image).attr("src", eventData.filename);
             var cropper = new crop(image, {
                 scalable: true,
                 zoomable: true,
-                aspectRatio: (imageSize.width / imageSize.height),
-                crop(event) {
-                    console.log(event);
-                }
+                minContainerWidth: Math.min($(window).width() - 200, imageSize.width),
+                minContainerHeight: Math.min($(window).height() - 200, imageSize.height),
             });
-            cropper.zoomTo(1);
-            // var resize = new croppie(clone.find('.event-screenshot')[0], {
-            //     viewport: { width: imageSize.width, height: imageSize.height },
-            //     boundary: { width: imageSize.width, height: imageSize.height },
-            //     showZoomer: false,
-            //     enableResize: true,
-            //     enableOrientation: true,
-            //     mouseWheelZoom: 'ctrl'
-            // });
-            // resize.bind({
-            //     url: 'example.png',
-            // });
-            // //on button click
-            // resize.result('blob').then(function(blob) {
-            //     console.log(blob);
-            //     // do something with cropped blob
-            // });
+            clone.find('.event-screenshot-add-region').on('click', () => {
+                var json = JSON.parse(clone.find('textarea').val());
+                if (json.locations == undefined) return; 
+                var cropData = cropper.getData();
+                // Get rid of data I don't care about
+                var unwantedData = ["rotate", "scaleX", "scaleY"];
+                unwantedData.forEach(item => delete cropData[item]);
+                // Round values 
+                Object.keys(cropData).forEach(item => cropData[item] = cropData[item].toFixed(3))
+                json.locations.push(cropData);
+                clone.find('textarea').val(JSON.stringify(json));
+            });
+            eventData.cropper = cropper;
         }
     }
     autofillFunctions[eventData.type](clone);
@@ -114,6 +106,7 @@ function main() {
             continue;
         }
         events[i.toString()] = record;
+        record.id = i.toString();
         var event = getFilledInTemplate(record);
         $(event).attr("data-event-id", i);
         $("#content").append(event);

@@ -12,8 +12,16 @@ async function handleClick(command) {
 }
 
 var commands = {
-    // https://stackoverflow.com/a/39914235/1524950
-    "wait": async (command) => { return new Promise(resolve => setTimeout(resolve, command.ms)); },
+    "wait": async (command) => { 
+        // there are 50 -s
+        console.log("|--------------------------------------------------|");
+        process.stdout.write("|");
+        for (var i = 0; i < 50; i++) {
+            setTimeout(() => { process.stdout.write("-"); }, command.ms / 50 * i);
+        }
+        setTimeout(() => { console.log("|"); }, command.ms - 5);
+        return new Promise(resolve => setTimeout(resolve, command.ms)); 
+    },
     "mouseclick": handleClick,
     "mouseup": handleClick,
     "movemouse": async (command) => { r.moveMouse(command['x'], command['y']); },
@@ -52,7 +60,7 @@ function runCommands(index) {
         playbackCount++;
         if (playbackCount <= maxPlayback) {
             console.log("Waiting " + timeBetweenPlayback + "ms (will be iteration " + playbackCount + "/" + maxPlayback + ").");
-            setTimeout(() => { runCommands(0) }, timeBetweenPlayback);
+            commands["wait"]({"ms": timeBetweenPlayback}).then(() => runCommands(0));
         }
     }
 } 

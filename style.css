@@ -20,6 +20,12 @@ body {
     cursor: pointer;
 }
 
+/* these rules are for cropperjs */
+.event-screenshot {
+    display: block;
+    max-width: 100%;
+}
+
 .event-details {
     /* text-decoration: underline; */
     cursor: pointer;

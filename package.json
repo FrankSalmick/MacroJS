@@ -15,6 +15,8 @@
     "start": "electron ."
   },
   "dependencies": {
+    "cropperjs": "^1.5.6",
+    "image-size": "^0.8.3",
     "jquery": "^3.4.1"
   },
   "devDependencies": {

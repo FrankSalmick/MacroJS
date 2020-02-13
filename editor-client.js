@@ -1,5 +1,7 @@
 const $ = require('jquery');
 const fs = require('fs');
+const crop = require('cropperjs');
+const imgSize = require('image-size');
 var recordingData; 
 var events = {};
 var dirtyData = false;
@@ -57,6 +59,40 @@ function getFilledInTemplate(eventData) {
         },
         "wait": () => {
             clone.find(".event-details").first().text("Waited for " + eventData.ms + "ms");
+        },
+        "regionmatch": () => {
+            // Goal: Get this in the console {"type": "regionmatch", "filename": "example.png", "location": { }}
+            clone.find(".event-details").first().text("Matched a region");
+            var imageSize = imgSize('example.png');
+            var image = clone.find(".event-screenshot")[0];
+            $(image).attr("height", imageSize.height);
+            $(image).attr("width", imageSize.width);
+            $(image).attr("src", "example.png");
+            var cropper = new crop(image, {
+                scalable: true,
+                zoomable: true,
+                aspectRatio: (imageSize.width / imageSize.height),
+                crop(event) {
+                    console.log(event);
+                }
+            });
+            cropper.zoomTo(1);
+            // var resize = new croppie(clone.find('.event-screenshot')[0], {
+            //     viewport: { width: imageSize.width, height: imageSize.height },
+            //     boundary: { width: imageSize.width, height: imageSize.height },
+            //     showZoomer: false,
+            //     enableResize: true,
+            //     enableOrientation: true,
+            //     mouseWheelZoom: 'ctrl'
+            // });
+            // resize.bind({
+            //     url: 'example.png',
+            // });
+            // //on button click
+            // resize.result('blob').then(function(blob) {
+            //     console.log(blob);
+            //     // do something with cropped blob
+            // });
         }
     }
     autofillFunctions[eventData.type](clone);

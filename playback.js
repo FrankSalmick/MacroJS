@@ -17,7 +17,11 @@ var commands = {
         console.log("|--------------------------------------------------|");
         process.stdout.write("|");
         for (var i = 0; i < 50; i++) {
+<<<<<<< HEAD
             setTimeout(() => process.stdout.write("-"), command.ms / 50 * i);
+=======
+            setTimeout(() => { process.stdout.write("-"); }, command.ms / 50 * i);
+>>>>>>> f789c69957aae64dac4955615d1d74b3de1f4d44
         }
         setTimeout(() => { console.log("|"); }, command.ms - 5);
         return new Promise(resolve => setTimeout(resolve, command.ms)); 

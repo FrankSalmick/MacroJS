@@ -4,7 +4,8 @@ const buttons = ["", "left", "right"];
 var playbackCount = 1;
 // todo user configurable 
 var maxPlayback = 20;
-var timeBetweenPlayback = 500; //ms
+var timeBetweenPlayback = 2000; //ms
+var macroName = "test";
 
 async function handleClick(command) {
     r.moveMouse(command['x'], command['y']);
@@ -13,15 +14,9 @@ async function handleClick(command) {
 
 var commands = {
     "wait": async (command) => { 
-        // there are 50 -s
-        console.log("|--------------------------------------------------|");
         process.stdout.write("|");
         for (var i = 0; i < 50; i++) {
-<<<<<<< HEAD
             setTimeout(() => process.stdout.write("-"), command.ms / 50 * i);
-=======
-            setTimeout(() => { process.stdout.write("-"); }, command.ms / 50 * i);
->>>>>>> f789c69957aae64dac4955615d1d74b3de1f4d44
         }
         setTimeout(() => { console.log("|"); }, command.ms - 5);
         return new Promise(resolve => setTimeout(resolve, command.ms)); 
@@ -36,7 +31,7 @@ var commands = {
 };
 
 // todo support arbitrary files
-var input = fs.readFileSync('./playbackfile.txt');
+var input = fs.readFileSync("playbackfiles/" + macroName + '/playbackfile.txt');
 input = input.toString().split("\n");
 for (var i = 0; i < input.length; i++) {
     try {
@@ -64,4 +59,12 @@ function runCommands(index) {
         }
     }
 } 
-runCommands(0);
+
+
+function main() {
+    // there are 50 -s
+    console.log("|--------------------------------------------------|");
+    runCommands(0);
+}
+
+main();

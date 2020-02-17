@@ -6,6 +6,7 @@ const textColor = "\x1b[37m";
 var dirtyData = false;
 var recording = false;
 var lastAction;
+var macroName = "test";
 
 // ctrl shift g
 // todo hardcoded
@@ -24,7 +25,7 @@ var mainMenu = {
     },
     "Reload config": () => {
         if (fs.existsSync(configFilename)) {
-            var diskConfig = fs.readFileSync("./record-config.txt");
+            var diskConfig = fs.readFileSync(configFilename);
             diskConfig = JSON.parse(diskConfig);
             // Make sure the file has the right data
             var matchesExactly = true;
@@ -98,8 +99,8 @@ var mainMenu = {
     },
     "Record now": () => {
         // Todo: Configurable/multiple recording files
-        if (fs.existsSync("playbackfile.txt")) {
-            fs.unlinkSync("playbackfile.txt");
+        if (fs.existsSync("playbackfiles/" + macroName + "/playbackfile.txt")) {
+            fs.unlinkSync("playbackfiles/" + macroName + "/playbackfile.txt");
         }
         io.registerShortcut(stopKeybind, () => {
             io.stop();
@@ -118,13 +119,13 @@ var mainMenu = {
                         // Needs to be blocking so that actions don't start appearing out of order
                         var ms = (newDate - lastAction);
                         var waitObj = {type: "wait", ms: ms}
-                        fs.appendFileSync('./playbackfile.txt', JSON.stringify(waitObj) + "\n");
+                        fs.appendFileSync("playbackfiles/" + macroName + '/playbackfile.txt', JSON.stringify(waitObj) + "\n");
                         console.log(waitObj);
                         // we don't use newDate in case it took a long time to write the file for some reason
                         lastAction = new Date();
                     }
                     console.log(data);
-                    fs.appendFileSync('./playbackfile.txt', JSON.stringify(data) + "\n");
+                    fs.appendFileSync("playbackfiles/" + macroName + '/playbackfile.txt', JSON.stringify(data) + "\n");
                 })
             } else {
                 console.log(value + " is disabled in config.");
@@ -144,6 +145,8 @@ function main() {
     // Make the text white (I like it more that way)
     console.log(textColor);
 
+    if (!fs.existsSync("playbackfiles/")) fs.mkdirSync("playbackfiles/");
+    if (!fs.existsSync("playbackfiles/" + macroName)) fs.mkdirSync("playbackfiles/" + macroName);
     mainMenu["Reload config"]();
     mainMenu["Show config"]();
     console.log("Setup complete!");

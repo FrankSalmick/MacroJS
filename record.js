@@ -1,6 +1,6 @@
 const io = require('iohook');
 const readline = require('readline-sync');
-const screenshot = require('desktop-screenshot');
+const screenshot = require('screenshot-desktop');
 const robot = require('robotjs');
 const fs = require('fs');
 const configFilename = "./record-config.txt";
@@ -101,10 +101,10 @@ var mainMenu = {
     },
     "Record now": () => {
         if (fs.existsSync("playbackfiles/" + macroName)) {
-            fs.rmdirSync("playbackfiles/" + macroName);
+            fs.rmdirSync("playbackfiles/" + macroName, {recursive: true});
         }
-        fs.mkdir("playbackfiles/" + macroName);
-        fs.mkdir("playbackfiles/" + macroName + "/images");
+        fs.mkdirSync("playbackfiles/" + macroName);
+        fs.mkdirSync("playbackfiles/" + macroName + "/images");
         io.registerShortcut(stopKeybind, () => {
             io.stop();
             process.exit();
@@ -120,7 +120,7 @@ var mainMenu = {
                     robot.moveMouse(-9999, 9999);
                     var filename = (new Date()).getTime() + ".png";
                     data.filename = filename;
-                    screenshot("playbackfiles/" + macroName + "/images/" + filename, (error, complete) => { robot.moveMouse(mousePos.x, mousePos.y) });
+                    screenshot({filename: "playbackfiles/" + macroName + "/images/" + filename }).then(img => { robot.moveMouse(mousePos.x, mousePos.y) });
                     if (lastAction == undefined) {
                         lastAction = new Date();
                     }

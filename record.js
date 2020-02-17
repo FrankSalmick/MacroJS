@@ -1,12 +1,14 @@
 const io = require('iohook');
 const readline = require('readline-sync');
+const screenshot = require('desktop-screenshot');
+const robot = require('robotjs');
 const fs = require('fs');
 const configFilename = "./record-config.txt";
 const textColor = "\x1b[37m";
 var dirtyData = false;
 var recording = false;
 var lastAction;
-var macroName = "test";
+var macroName = "test2";
 
 // ctrl shift g
 // todo hardcoded
@@ -98,10 +100,11 @@ var mainMenu = {
         }
     },
     "Record now": () => {
-        // Todo: Configurable/multiple recording files
-        if (fs.existsSync("playbackfiles/" + macroName + "/playbackfile.txt")) {
-            fs.unlinkSync("playbackfiles/" + macroName + "/playbackfile.txt");
+        if (fs.existsSync("playbackfiles/" + macroName)) {
+            fs.rmdirSync("playbackfiles/" + macroName);
         }
+        fs.mkdir("playbackfiles/" + macroName);
+        fs.mkdir("playbackfiles/" + macroName + "/images");
         io.registerShortcut(stopKeybind, () => {
             io.stop();
             process.exit();
@@ -111,6 +114,13 @@ var mainMenu = {
                 console.log("Binding to " + value);
                 io.on(value, data => {
                     if (!recording) return;
+                    // take screenshot
+                    var mousePos = robot.getMousePos(); 
+                    // move the mouse out of the way
+                    robot.moveMouse(-9999, 9999);
+                    var filename = (new Date()).getTime() + ".png";
+                    data.filename = filename;
+                    screenshot("playbackfiles/" + macroName + "/images/" + filename, (error, complete) => { robot.moveMouse(mousePos.x, mousePos.y) });
                     if (lastAction == undefined) {
                         lastAction = new Date();
                     }
@@ -133,7 +143,7 @@ var mainMenu = {
         });
         recording = true;
         io.start();
-        console.log("Use ctrl+shift+g to stop recording. Your first click will not be recorded, so that you can re-focus windows.");
+        console.log("Use ctrl+shift+g to stop recording. Whenever you click, your mouse will be moved so that a screenshot can be taken for optional image matching later.");
    },
     "Quit": () => {
         console.log("You can also use ctrl+c any time (recordings will be saved if mid-record)");
@@ -146,10 +156,10 @@ function main() {
     console.log(textColor);
 
     if (!fs.existsSync("playbackfiles/")) fs.mkdirSync("playbackfiles/");
-    if (!fs.existsSync("playbackfiles/" + macroName)) fs.mkdirSync("playbackfiles/" + macroName);
     mainMenu["Reload config"]();
     mainMenu["Show config"]();
     console.log("Setup complete!");
+    printError("Don't forget to disable flux!");
     var choice;
     while (choice != "Record now") {
         printLogo();

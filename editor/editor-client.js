@@ -2,7 +2,9 @@ const $ = require('jquery');
 const fs = require('fs');
 const crop = require('cropperjs');
 const imgSize = require('image-size');
-var macroName = "test";
+// note, errors about The specified module could not be found just need an electron-rebuild.
+const sharp = require('sharp');
+var macroName = "test2";
 var recordingData; 
 var events = {};
 var dirtyData = false;
@@ -31,7 +33,7 @@ function getTemplate(event) {
 
     // And save button
     footerClone.find(".event-save").first().on('click', event => {
-        saveItem(event.target);
+        alert("Not yet finished.");
         dataIsDirty(true);
     });
 
@@ -63,7 +65,7 @@ function getFilledInTemplate(eventData) {
         },
         "regionmatch": () => {
             clone.find(".event-details").first().text("Matched a region");
-            var filename = "playbackfiles/" + macroName + "/images/" + eventData.filename;
+            var filename = "../playbackfiles/" + macroName + "/images/" + eventData.filename;
             var imageSize = imgSize(filename);
             var image = clone.find(".event-screenshot")[0];
             $(image).attr("src", filename);
@@ -76,20 +78,21 @@ function getFilledInTemplate(eventData) {
             clone.find('.event-screenshot-add-region').on('click', () => {
                 var json = JSON.parse(clone.find('textarea').val());
                 if (json.locations == undefined) return; 
-                var allCropData = cropper.getData();
+                var allCropData = cropper.getData(true);
                 // Only consider data I want
                 var cropData = {};
                 var wantedData = ["x", "y", "width", "height"];
                 wantedData.forEach(item => cropData[item] = allCropData[item]);
-                // Round values 
-                Object.keys(cropData).forEach(item => cropData[item] = cropData[item].toFixed(3))
                 json.locations.push(cropData);
                 clone.find('textarea').val(JSON.stringify(json));
                 // Crop the picture and save it
                 // https://stackoverflow.com/a/5971674/1524950
-                var data = cropper.getCroppedCanvas().toDataURL().replace(/^data:image\/\w+;base64,/, "");
-                fs.writeFile(filename + "-" + cropData.x + "-" + cropData.y + "-" + cropData.width + "-" + cropData.height, new Buffer(data, 'base64'), () => { return; });
-                dataIsDirty(true);
+                // cropper.setCropBoxData({left: cropData.left, top: cropData.y + cropData.height, width: cropData.width, height: cropData.height});
+                // We use a different library instead of getting it from cropper because this is the lib we use in playback.js. Cropper was giving me very slightly different images, which messed with the comparison step
+                sharp(image.src).extract({left: Number(cropData.x), top: Number(cropData.y), width: Number(cropData.width), height: Number(cropData.height)}).toBuffer(data => {
+                    fs.writeFile(filename + "-" + cropData.x + "-" + cropData.y + "-" + cropData.width + "-" + cropData.height, data, () => { return; });
+                    dataIsDirty(true);
+                });
             });
             eventData.cropper = cropper;
         }
@@ -98,16 +101,14 @@ function getFilledInTemplate(eventData) {
     return clone;
 }
 
-function save() {
-    dataIsDirty(false);
-    // write the json strings to the file in order
-}
-
 function main() {
     // Attach to the save button
-    $("#header").on('click', save);
+    $("#header").on('click', () => {
+        alert("Not yet implemented.");    
+        dataIsDirty(false);
+    });
     // Ingest the data
-    recordingData = fs.readFileSync("playbackfiles/" + macroName + "/playbackfile.txt").toString().split("\n");
+    recordingData = fs.readFileSync("../playbackfiles/" + macroName + "/playbackfile.txt").toString().split("\n");
     for (var i = 0; i <= recordingData.length; i++) {
         try {
             record = JSON.parse(recordingData[i]);

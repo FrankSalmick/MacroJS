@@ -2,6 +2,7 @@ const $ = require('jquery');
 const fs = require('fs');
 const crop = require('cropperjs');
 const imgSize = require('image-size');
+var macroName = "test";
 var recordingData; 
 var events = {};
 var dirtyData = false;
@@ -61,11 +62,11 @@ function getFilledInTemplate(eventData) {
             clone.find(".event-details").first().text("Waited for " + eventData.ms + "ms");
         },
         "regionmatch": () => {
-            // Goal: Get this in the console {"type": "regionmatch", "filename": "example.png", "location": { }}
             clone.find(".event-details").first().text("Matched a region");
-            var imageSize = imgSize('example.png');
+            var filename = "playbackfiles/" + macroName + "/images/" + eventData.filename;
+            var imageSize = imgSize(filename);
             var image = clone.find(".event-screenshot")[0];
-            $(image).attr("src", eventData.filename);
+            $(image).attr("src", filename);
             var cropper = new crop(image, {
                 scalable: true,
                 zoomable: true,
@@ -75,14 +76,20 @@ function getFilledInTemplate(eventData) {
             clone.find('.event-screenshot-add-region').on('click', () => {
                 var json = JSON.parse(clone.find('textarea').val());
                 if (json.locations == undefined) return; 
-                var cropData = cropper.getData();
-                // Get rid of data I don't care about
-                var unwantedData = ["rotate", "scaleX", "scaleY"];
-                unwantedData.forEach(item => delete cropData[item]);
+                var allCropData = cropper.getData();
+                // Only consider data I want
+                var cropData = {};
+                var wantedData = ["x", "y", "width", "height"];
+                wantedData.forEach(item => cropData[item] = allCropData[item]);
                 // Round values 
                 Object.keys(cropData).forEach(item => cropData[item] = cropData[item].toFixed(3))
                 json.locations.push(cropData);
                 clone.find('textarea').val(JSON.stringify(json));
+                // Crop the picture and save it
+                // https://stackoverflow.com/a/5971674/1524950
+                var data = cropper.getCroppedCanvas().toDataURL().replace(/^data:image\/\w+;base64,/, "");
+                fs.writeFile(filename + "-" + cropData.x + "-" + cropData.y + "-" + cropData.width + "-" + cropData.height, new Buffer(data, 'base64'), () => { return; });
+                dataIsDirty(true);
             });
             eventData.cropper = cropper;
         }
@@ -91,14 +98,16 @@ function getFilledInTemplate(eventData) {
     return clone;
 }
 
+function save() {
+    dataIsDirty(false);
+    // write the json strings to the file in order
+}
+
 function main() {
     // Attach to the save button
-    $("#header").on('click', event => {
-        // Save 
-        dataIsDirty(false);
-    });
+    $("#header").on('click', save);
     // Ingest the data
-    recordingData = fs.readFileSync("playbackfile.txt").toString().split("\n");
+    recordingData = fs.readFileSync("playbackfiles/" + macroName + "/playbackfile.txt").toString().split("\n");
     for (var i = 0; i <= recordingData.length; i++) {
         try {
             record = JSON.parse(recordingData[i]);

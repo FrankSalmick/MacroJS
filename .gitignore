@@ -1,6 +1,4 @@
-node_modules/*
-playbackfile.txt
 record-config.txt
 record-config.txt-backup
 package-lock.json
-LoR-playbackfile.txt
+node_modules

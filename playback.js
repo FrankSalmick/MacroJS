@@ -1,6 +1,5 @@
 const r = require('robotjs');
 const fs = require('fs');
-// const pixelmatch = require('pixelmatch');
 const looksame = require('looks-same');
 const screenshot = require('screenshot-desktop');
 const sharp = require('sharp');
@@ -45,7 +44,7 @@ var commands = {
         for (var i = 0; i < 50; i++) {
             setTimeout(() => process.stdout.write("-"), command.ms / 50 * i);
         }
-        setTimeout(() => { console.log("|"); }, command.ms - 5);
+        setTimeout(() => { console.log("|"); }, command.ms);
         return new Promise(resolve => setTimeout(resolve, command.ms)); 
     },
     "mouseclick": handleClick,

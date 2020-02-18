@@ -123,7 +123,6 @@ var mainMenu = {
         });
         Object.keys(options).forEach(value => {
             if (options[value]) {
-                console.log("Binding to " + value);
                 io.on(value, data => {
                     if (!recording) return;
                     if (lastAction == undefined) {
@@ -142,8 +141,6 @@ var mainMenu = {
                     console.log(data);
                     fs.appendFileSync("playbackfiles/" + macroName + '/playbackfile.txt', JSON.stringify(data) + "\n");
                 })
-            } else {
-                console.log(value + " is disabled in config.");
             }
         });
         recording = true;

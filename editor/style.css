@@ -2,48 +2,12 @@ body {
     font-size: 2em;
 }
 
-.header {
+#header {
     font-size: 1.25em;
-}
-
-#dirty-data {
-    display:none;
-}
-
-.event-delete {
-    color:red;
-    cursor: pointer;
-}
-
-.event-save {
-    color:green;
-    cursor: pointer;
 }
 
 /* these rules are for cropperjs */
-.event-screenshot {
+#screenshot-container {
     display: block;
     max-width: 100%;
-}
-
-.event-details {
-    /* text-decoration: underline; */
-    cursor: pointer;
-}
-
-.event-raw {
-    font-size: 1.25em;
-}
-
-.event-options {
-    text-decoration: none !important;
-    display:none;
-}
-
-.event {
-    width: 100%;
-}
-
-#event-templates {
-    display: none;
 }

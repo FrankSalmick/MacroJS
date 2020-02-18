@@ -3,15 +3,15 @@ MacroJS is a CLI macro recorder/player that supports waiting for content to appe
 
 # Screenshots
 
+### Playback a simple macro (No image matching)
+
+![simple macro](https://s5.gifyu.com/images/2020-02-17_23-50-14.gif)
+
 ### Playback a macro (image matching)
 
 This macro waits for the image to appear before proceeding to the next operation (closing the image).
 
 ![macro playback gif](https://s5.gifyu.com/images/2020-02-17_23-47-57.gif)
-
-### Playback a simple macro (No image matching)
-
-![simple macro](https://s5.gifyu.com/images/2020-02-17_23-50-14.gif)
 
 ### Record a macro
 

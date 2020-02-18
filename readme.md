@@ -15,7 +15,7 @@ This macro waits for the image to appear before proceeding to the next operation
 
 ### Record a macro
 
-![record.js screenshot](https://i.imgur.com/cQzDkJ9.png)
+![record.js screenshot](https://i.imgur.com/hBSvVyo.png)
 
 # Usage
 

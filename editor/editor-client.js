@@ -1,10 +1,11 @@
+// todo this is going to turn into more of just a single purpose app to select regions of images. I'd rather just edit the json directly, it's easier that way.
 const $ = require('jquery');
 const fs = require('fs');
 const crop = require('cropperjs');
 const imgSize = require('image-size');
 // note, errors about The specified module could not be found just need an electron-rebuild.
 const sharp = require('sharp');
-var macroName = "test2";
+var macroName = "lor2";
 var recordingData; 
 var events = {};
 var dirtyData = false;
@@ -89,8 +90,7 @@ function getFilledInTemplate(eventData) {
                 // https://stackoverflow.com/a/5971674/1524950
                 // cropper.setCropBoxData({left: cropData.left, top: cropData.y + cropData.height, width: cropData.width, height: cropData.height});
                 // We use a different library instead of getting it from cropper because this is the lib we use in playback.js. Cropper was giving me very slightly different images, which messed with the comparison step
-                sharp(image.src).extract({left: Number(cropData.x), top: Number(cropData.y), width: Number(cropData.width), height: Number(cropData.height)}).toBuffer(data => {
-                    fs.writeFile(filename + "-" + cropData.x + "-" + cropData.y + "-" + cropData.width + "-" + cropData.height, data, () => { return; });
+                sharp(filename).extract({left: Number(cropData.x), top: Number(cropData.y), width: Number(cropData.width), height: Number(cropData.height)}).toFile(filename + "-" + cropData.x + "-" + cropData.y + "-" + cropData.width + "-" + cropData.height).then(data => {
                     dataIsDirty(true);
                 });
             });

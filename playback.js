@@ -1,15 +1,42 @@
 const r = require('robotjs');
 const fs = require('fs');
+// const pixelmatch = require('pixelmatch');
+const looksame = require('looks-same');
+const screenshot = require('screenshot-desktop');
+const imgSize = require('image-size');
+const sharp = require('sharp');
 const buttons = ["", "left", "right"];
 var playbackCount = 1;
 // todo user configurable 
 var maxPlayback = 20;
 var timeBetweenPlayback = 2000; //ms
-var macroName = "test";
+var macroName = "lor2";
 
 async function handleClick(command) {
     r.moveMouse(command['x'], command['y']);
     r.mouseClick(buttons[command['button']]); 
+}
+
+function checkForScreenshot(resolve, command) {
+    screenshot({format: 'png'}).then((img) => { 
+        var locationData = command.locations[0];
+        sharp(img).extract({left: Number(locationData.x), top: Number(locationData.y), width: Number(locationData.width), height: Number(locationData.height)}).toBuffer().then(croppedImg => {
+            var storedImage = fs.readFileSync("playbackfiles/" + macroName + "/images/" + command.filename + "-" + locationData.x + "-" + locationData.y + "-" + locationData.width + "-" + locationData.height);
+            // debug:
+            // fs.writeFileSync("stored.png", storedImage);
+            // fs.writeFileSync("crop.png", croppedImg);
+            // looksame.createDiff({ reference: storedImage, current: croppedImg, diff: 'testout23.png'}, (error) => {if (error) console.log(error); })
+            // todo deal with minor differences between images (right now it's basically strict, except for exact color matching)
+            looksame(croppedImg, storedImage, {strict: false}, function(error, {equal}) { 
+                if (equal) {
+                    console.log("Matched.");
+                    resolve();
+                } else {
+                    checkForScreenshot(resolve, command);
+                }
+            })
+        });
+    }).catch(err => { console.log(err); });
 }
 
 var commands = {
@@ -23,6 +50,10 @@ var commands = {
     },
     "mouseclick": handleClick,
     "mouseup": handleClick,
+    "regionmatch": async (command) => {
+        console.log("|------------     Matching  region     ------------|");
+        return new Promise(resolve => checkForScreenshot(resolve, command));
+    },
     "movemouse": async (command) => { r.moveMouse(command['x'], command['y']); },
     "keyup": async (command) => {
         // todo broken b/c keycodes are not lining up like I expect from record.js
@@ -30,7 +61,6 @@ var commands = {
     }
 };
 
-// todo support arbitrary files
 var input = fs.readFileSync("playbackfiles/" + macroName + '/playbackfile.txt');
 input = input.toString().split("\n");
 for (var i = 0; i < input.length; i++) {
@@ -63,6 +93,7 @@ function runCommands(index) {
 
 function main() {
     // there are 50 -s
+    console.log("Don't forget to disable flux if using image matching!");
     console.log("|--------------------------------------------------|");
     runCommands(0);
 }

@@ -8,11 +8,14 @@ const textColor = "\x1b[37m";
 var dirtyData = false;
 var recording = false;
 var lastAction;
-var macroName = "test2";
+var macroName = "lor2";
 
 // ctrl shift g
 // todo hardcoded
 var stopKeybind = [29, 42, 34];
+
+// ctrl shift f
+var screenshotKeybind = [29, 42, 33];
 
 // todo support more
 var options = {
@@ -109,18 +112,21 @@ var mainMenu = {
             io.stop();
             process.exit();
         });
+        io.registerShortcut(screenshotKeybind, () => {
+            // move the mouse out of the way
+            var mousePos = robot.getMousePos(); 
+            robot.moveMouse(-9999, 9999);
+            var filename = "playbackfiles/" + macroName + "/images/" + (new Date()).getTime() + ".png";
+            screenshot({filename: filename }).then(img => { 
+                robot.moveMouse(mousePos.x, mousePos.y) 
+                console.log("Saved screenshot in " + filename);
+            });
+        });
         Object.keys(options).forEach(value => {
             if (options[value]) {
                 console.log("Binding to " + value);
                 io.on(value, data => {
                     if (!recording) return;
-                    // take screenshot
-                    var mousePos = robot.getMousePos(); 
-                    // move the mouse out of the way
-                    robot.moveMouse(-9999, 9999);
-                    var filename = (new Date()).getTime() + ".png";
-                    data.filename = filename;
-                    screenshot({filename: "playbackfiles/" + macroName + "/images/" + filename }).then(img => { robot.moveMouse(mousePos.x, mousePos.y) });
                     if (lastAction == undefined) {
                         lastAction = new Date();
                     }
@@ -143,7 +149,7 @@ var mainMenu = {
         });
         recording = true;
         io.start();
-        console.log("Use ctrl+shift+g to stop recording. Whenever you click, your mouse will be moved so that a screenshot can be taken for optional image matching later.");
+        console.log("Use ctrl+shift+g to stop recording. Use ctrl+shift+f to take a screenshot for matching later.");
    },
     "Quit": () => {
         console.log("You can also use ctrl+c any time (recordings will be saved if mid-record)");

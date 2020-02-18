@@ -19,10 +19,16 @@ This macro waits for the image to appear before proceeding to the next operation
 
 # Usage
 
+### Commands
+
 - `node record.js <macroname>` to record a macro
 - `node playback.js <macroname>` to playback a macros
 - `npm start` to start the advanced macro editor (must be inside the /editor directory)
   - The macro editor will output a command you can insert into your playback file located in `playbackfiles/<macroname>/playbackfile.txt`. This playback file is also how you modify your macros. At this point I don't plan to expand the purpose of the editor.
+  
+### Example
+
+Included in playbackfiles/ is the inspiration for this project, a macro named `lor` that will auto-concede against the AI in Legends of Runeterra. Use this to grind as many cards as you want! To use it, just select a deck (so [this menu](https://i.imgur.com/cco8yvj.png) is open) and run it with `node playback.js lor` in the root directory.
 
 # Install 
 

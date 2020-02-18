@@ -1,10 +1,10 @@
-{"type":"regionmatch","filename":"1582002300576.png","locations":[{"x":1455,"y":914,"width":367,"height":134}],"id":"0"}
+{"type":"regionmatch","filename":"1582002300576.png","locations":[{"x":1455,"y":914,"width":367,"height":134}]}
 {"button":1,"clicks":1,"x":1590,"y":957,"type":"mouseup"}
-{"type":"regionmatch","filename":"1582002284685.png","locations":[{"x":1821,"y":29,"width":52,"height":47}],"id":"0"}
+{"type":"regionmatch","filename":"1582002284685.png","locations":[{"x":1821,"y":29,"width":52,"height":47}]}
 {"button":1,"clicks":2,"x":1851,"y":51,"type":"mouseup"}
 {"type":"wait","ms":836}
 {"button":1,"clicks":3,"x":886,"y":896,"type":"mouseup"}
 {"type":"wait","ms":591}
 {"button":1,"clicks":4,"x":1127,"y":610,"type":"mouseup"}
-{"type":"regionmatch","filename":"1582002296363.png","locations":[{"x":1194,"y":935,"width":163,"height":45}],"id":"0"}
+{"type":"regionmatch","filename":"1582002296363.png","locations":[{"x":1194,"y":935,"width":163,"height":45}]}
 {"button":1,"clicks":5,"x":1225,"y":958,"type":"mouseup"}

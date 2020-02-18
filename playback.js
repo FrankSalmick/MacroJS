@@ -3,7 +3,6 @@ const fs = require('fs');
 // const pixelmatch = require('pixelmatch');
 const looksame = require('looks-same');
 const screenshot = require('screenshot-desktop');
-const imgSize = require('image-size');
 const sharp = require('sharp');
 const buttons = ["", "left", "right"];
 var playbackCount = 1;

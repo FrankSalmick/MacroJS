@@ -2,7 +2,6 @@
 const $ = require('jquery');
 const fs = require('fs');
 const crop = require('cropperjs');
-const imgSize = require('image-size');
 // note, errors about The specified module could not be found just need an electron-rebuild.
 const sharp = require('sharp');
 var macroName;
@@ -33,7 +32,6 @@ function selectImage(selectedImage) {
     if (cropperInstance != undefined) cropperInstance.destroy();
     var filename = "../playbackfiles/" + macroName + "/images/" + selectedImage;
     currentImage = filename;
-    var imageSize = imgSize(filename);
     var image = document.getElementById("event-screenshot");
     image.src = filename;
     cropperInstance = new crop(image, {

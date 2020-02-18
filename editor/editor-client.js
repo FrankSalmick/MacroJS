@@ -5,7 +5,7 @@ const crop = require('cropperjs');
 const imgSize = require('image-size');
 // note, errors about The specified module could not be found just need an electron-rebuild.
 const sharp = require('sharp');
-var macroName = "lor2";
+var macroName;
 var defaultText;
 var cropperInstance;
 var currentImage;
@@ -52,6 +52,7 @@ $("#add").on('click', () => {
     var wantedData = ["x", "y", "width", "height"];
     wantedData.forEach(item => cropData[item] = allCropData[item]);
     json.locations.push(cropData);
+    json.filename = currentImage.split("/images/")[1];
     $("#event-raw").text(JSON.stringify(json));
     // Crop the picture and save it
     // cropper.setCropBoxData({left: cropData.left, top: cropData.y + cropData.height, width: cropData.width, height: cropData.height});

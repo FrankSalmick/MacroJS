@@ -11,6 +11,7 @@ var playbackCount = 1;
 var maxPlayback = 20;
 var timeBetweenPlayback = 2000; //ms
 var macroName = "lor2";
+var input;
 
 async function handleClick(command) {
     r.moveMouse(command['x'], command['y']);
@@ -61,17 +62,6 @@ var commands = {
     }
 };
 
-var input = fs.readFileSync("playbackfiles/" + macroName + '/playbackfile.txt');
-input = input.toString().split("\n");
-for (var i = 0; i < input.length; i++) {
-    try {
-        var temp = JSON.parse(input[i]);
-        input[i] = temp;
-    } catch (e) {
-        input.splice(i);
-        i--;
-    }
-}
 
 // This will go until it hits a wait. The wait will run the next runCommands() in a setTimeout, which will run all commands until the next wait.
 // It's kind of like strtok
@@ -95,6 +85,22 @@ function main() {
     // there are 50 -s
     console.log("Don't forget to disable flux if using image matching!");
     console.log("|--------------------------------------------------|");
+    macroName = process.argv[2];
+    if (process.argv[2] == undefined) {
+        console.log("No macro name passed as an argument, using 'default'");
+        macroName = "default";
+    }
+    input = fs.readFileSync("playbackfiles/" + macroName + '/playbackfile.txt');
+    input = input.toString().split("\n");
+    for (var i = 0; i < input.length; i++) {
+        try {
+            var temp = JSON.parse(input[i]);
+            input[i] = temp;
+        } catch (e) {
+            input.splice(i);
+            i--;
+        }
+    }
     runCommands(0);
 }
 

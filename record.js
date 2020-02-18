@@ -8,7 +8,7 @@ const textColor = "\x1b[37m";
 var dirtyData = false;
 var recording = false;
 var lastAction;
-var macroName = "lor2";
+var macroName;
 
 // ctrl shift g
 // todo hardcoded
@@ -53,7 +53,6 @@ var mainMenu = {
                 Object.keys(diskConfig).forEach(value => {
                     options[value] = diskConfig[value];
                 });
-                console.log("Successfully imported config");
             }
             if (matchesExactly) {
                 mergeConfigs();
@@ -161,11 +160,15 @@ function main() {
     // Make the text white (I like it more that way)
     console.log(textColor);
 
+    macroName = process.argv[2];
+    if (process.argv[2] == undefined) {
+        printError("No macro name passed as an argument, using 'default'");
+        macroName = "default";
+    }
     if (!fs.existsSync("playbackfiles/")) fs.mkdirSync("playbackfiles/");
     mainMenu["Reload config"]();
     mainMenu["Show config"]();
-    console.log("Setup complete!");
-    printError("Don't forget to disable flux!");
+    printError("Setup complete! Don't forget to disable flux!");
     var choice;
     while (choice != "Record now") {
         printLogo();

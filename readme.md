@@ -32,7 +32,15 @@ Included in playbackfiles/ is the inspiration for this project, a macro named `l
 
 # Install 
 
+### You will need NodeJS
+
+https://nodejs.org/en/download/
+
 ### You will need the following npm packages installed in the root directory:
+
+Install them by opening a command prompt in the root directory and run `npm i <package name>`, or use this command to install all of them:
+
+> npm i readline-sync iohook robotjs screenshot-desktop looks-same sharp
 
 - `readline-sync` because I wrote this project as a way of learning how to use Node, and didn't realize this was a pretty bad way of getting input. I'll refactor it out at some point.
 - `iohook` so the recorder can listen to inputs on your keyboard/mouse
@@ -40,10 +48,6 @@ Included in playbackfiles/ is the inspiration for this project, a macro named `l
 - `screenshot-desktop` so you can take screenshots to image match while recording, and so the player can take screenshots to compare with 
 - `looks-same` so the player can determine if a region of your screen matches a screenshot
 - `sharp` to crop screenshots
-
-Here's an easy command for you!
-
-> npm i readline-sync iohook robotjs screenshot-desktop looks-same sharp
 
 ### You will need to run these commands inside the /editor directory to use the editor
 
@@ -57,5 +61,5 @@ To build sharp for electron, run
 
 At some point I'm going to refactor sharp out for something else because of this requirement.
 
-### Why is this so hard to set up? 
-I'm using this project to learn Node, I haven't spent time learning about its package manager yet. I'm sure it's pretty simple to get this to get done in one command, but I'll get to that later.
+### Why is there no precompiled binary?
+I'll do that at some point. Right now MacroJS is still actively being developed so I don't want to recompile it every time I push an update (which is often more than daily)

@@ -9,6 +9,7 @@ var dirtyData = false;
 var recording = false;
 var lastAction;
 var macroName;
+var pressedKeys = {};
 
 // ctrl shift g
 // todo hardcoded
@@ -20,6 +21,7 @@ var screenshotKeybind = [29, 42, 33];
 // todo support more
 var options = {
     "mouseup": true,
+    "keydown": true,
     "keyup": true
     // wait: true (forced)
 };
@@ -125,6 +127,13 @@ var mainMenu = {
             if (options[value]) {
                 io.on(value, data => {
                     if (!recording) return;
+                    if (data.type == 'keydown') {
+                        if (pressedKeys[data.rawcode] != undefined) return;
+                        else pressedKeys[data.rawcode] = true;
+                    }
+                    if (data.type == 'keyup') {
+                        delete pressedKeys[data.rawcode]
+                    }
                     if (lastAction == undefined) {
                         lastAction = new Date();
                     }
@@ -145,6 +154,7 @@ var mainMenu = {
         });
         recording = true;
         io.start();
+        console.clear()
         console.log("Use ctrl+shift+g to stop recording. Use ctrl+shift+f to take a screenshot for matching later.");
    },
     "Quit": () => {

@@ -1,4 +1,5 @@
 const r = require('robotjs');
+const keycode = require('keycode')
 const fs = require('fs');
 const looksame = require('looks-same');
 const screenshot = require('screenshot-desktop');
@@ -7,13 +8,15 @@ const buttons = ["", "left", "right"];
 var playbackCount = 1;
 // todo user configurable 
 var maxPlayback = 20;
-var timeBetweenPlayback = 2000; //ms
+var timeBetweenPlayback = 200; //ms
 var macroName = "lor2";
 var input;
 
 async function handleClick(command) {
+    var mousePos = r.getMousePos(); 
     r.moveMouse(command['x'], command['y']);
     r.mouseClick(buttons[command['button']]); 
+    r.moveMouse(mousePos['x'], mousePos['y']);
 }
 
 function checkForScreenshot(resolve, command) {
@@ -39,7 +42,11 @@ function checkForScreenshot(resolve, command) {
 }
 
 var commands = {
+    "note": async (command) => {
+        // do nothing
+    },
     "wait": async (command) => { 
+        // todo breaks if for less than mid double digits ms
         process.stdout.write("|");
         for (var i = 0; i < 50; i++) {
             setTimeout(() => process.stdout.write("-"), command.ms / 50 * i);
@@ -57,7 +64,10 @@ var commands = {
     "keyup": async (command) => {
         // todo broken b/c keycodes are not lining up like I expect from record.js
         // r.keyTap(command['keycode']);
-    }
+    },
+    
+    "keydown": async (command) => { r.keyToggle(keycode(command.rawcode), "down"); },
+    "keyup": async (command) => { r.keyToggle(keycode(command.rawcode), "up"); }
 };
 
 
@@ -79,7 +89,7 @@ function runCommands(index) {
 } 
 
 
-function main() {
+(() => {
     // there are 50 -s
     console.log("Don't forget to disable flux if using image matching!");
     console.log("|--------------------------------------------------|");
@@ -100,6 +110,4 @@ function main() {
         }
     }
     runCommands(0);
-}
-
-main();
+})();

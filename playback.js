@@ -15,7 +15,7 @@ var input;
 async function handleClick(command) {
     var mousePos = r.getMousePos(); 
     r.moveMouse(command['x'], command['y']);
-    r.mouseClick(buttons[command['button']]); 
+    r.mouseClick(buttons[command['button']]);
     r.moveMouse(mousePos['x'], mousePos['y']);
 }
 
@@ -61,11 +61,6 @@ var commands = {
         return new Promise(resolve => checkForScreenshot(resolve, command));
     },
     "movemouse": async (command) => { r.moveMouse(command['x'], command['y']); },
-    "keyup": async (command) => {
-        // todo broken b/c keycodes are not lining up like I expect from record.js
-        // r.keyTap(command['keycode']);
-    },
-    
     "keydown": async (command) => { r.keyToggle(keycode(command.rawcode), "down"); },
     "keyup": async (command) => { r.keyToggle(keycode(command.rawcode), "up"); }
 };

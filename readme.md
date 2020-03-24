@@ -1,5 +1,5 @@
 # MacroJS
-MacroJS is a CLI macro recorder/player that supports waiting for content to appear on screen. It's written in NodeJS and is cross-platform. At this point it's almost ready to be called version 1, it just needs an easier install process and to support keypresses (the boilerplate is all there, there are just a few things I need to fix up)
+MacroJS is a CLI macro recorder/player that supports waiting for content to appear on screen. It's written in NodeJS and is cross-platform. At this point it's almost ready to be called version 1, it just needs an easier install process.
 
 # Screenshots
 
@@ -63,3 +63,8 @@ At some point I'm going to refactor sharp out for something else because of this
 
 ### Why is there no precompiled binary?
 I'll do that at some point. Right now MacroJS is still actively being developed so I don't want to recompile it every time I push an update (which is often more than daily)
+
+
+### License
+
+This is licensed under GPL3. More details are available in the LICENSE file. If you need a more permissive license, feel free to ask! Just let me know what you plan on doing :)

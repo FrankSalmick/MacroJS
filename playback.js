@@ -63,7 +63,11 @@ var commands = {
         console.log(command.note);
     },
     "checkregion": async (command) => {
+        var imageMatched = false;
         if (checkForScreenshot(command)) {
+            imageMatched = true;
+        }
+        if (imageMatched == command.jumpOnMatch) {
             runCommands(command.index + 1);
         } else {
             runCommands(markings[command.failJumpName]);

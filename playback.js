@@ -101,7 +101,16 @@ function runCommands(index) {
             console.log("Warning: Invalid command type! Nothing ran.");
             runCommands(index + 1);
         } else {
-            commandToRun(value).then(() => runCommands(index + 1));
+            // array of commands to NOT automatically run the next command with. 
+            // these commands automatically handle running the next command on their own.
+            var blacklistedCommands = ['checkregion'];
+            commandToRun(value).then(() => {
+                // Somehow I want to take this out of here and put it into the functions themselves
+                // However, I need this to work now so I'm going to fix it later(tm)
+                if (blacklistedCommands.indexOf(value.type) == -1) {
+                    runCommands(index + 1);
+                }
+            });
         }
     }
     else {
@@ -121,7 +130,7 @@ function runCommands(index) {
     macroName = process.argv[2];
     if (process.argv[2] == undefined) {
         console.log("No macro name passed as an argument, using 'default'");
-        macroName = "t";
+        macroName = "default";
     }
     input = fs.readFileSync("playbackfiles/" + macroName + '/playbackfile.txt').toString().split("\n");
     for (var i = 0; i < input.length; i++) {
@@ -131,10 +140,10 @@ function runCommands(index) {
             if (parsedInput.type == "mark") {
                 // assumption: all marks are succeeded by a command
                 // because length = the index of the last item + 1, we don't have to add 1.
-                parsedInput["index"] = i;
                 markings[parsedInput.name] = inputCommands.length;   
             }
             else {
+                parsedInput["index"] = inputCommands.length;
                 inputCommands[inputCommands.length] = parsedInput;
             }
         } catch (e) {

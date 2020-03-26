@@ -20,34 +20,31 @@ async function handleClick(command) {
     var mousePos = r.getMousePos(); 
     r.moveMouse(command['x'], command['y']);
     r.mouseClick(buttons[command['button']]);
-    r.moveMouse(mousePos['x'], mousePos['y']);
+    // r.moveMouse(mousePos['x'], mousePos['y']);
 }
 
-function checkForScreenshot(command) {
-    screenshot({format: 'png'}).then((img) => { 
+async function checkForScreenshot(command) {
+    return screenshot({format: 'png'}).then((img) => { 
         var locationData = command.locations[0];
-        sharp(img).extract({left: Number(locationData.x), top: Number(locationData.y), width: Number(locationData.width), height: Number(locationData.height)}).toBuffer().then(croppedImg => {
+        return sharp(img).extract({left: Number(locationData.x), top: Number(locationData.y), width: Number(locationData.width), height: Number(locationData.height)}).toBuffer().then(croppedImg => {
             var storedImage = fs.readFileSync("playbackfiles/" + macroName + "/images/" + command.filename + "-" + locationData.x + "-" + locationData.y + "-" + locationData.width + "-" + locationData.height);
             // debug:
             // fs.writeFileSync("stored.png", storedImage);
             // fs.writeFileSync("crop.png", croppedImg);
             // looksame.createDiff({ reference: storedImage, current: croppedImg, diff: 'testout23.png'}, (error) => {if (error) console.log(error); })
             // todo deal with minor differences between images (right now it's basically strict, except for exact color matching)
-            looksame(croppedImg, storedImage, {strict: false}, function(error, {equal}) { 
-                if (equal) {
-                    console.log("Matched.");
-                    return true;
-                } else {
-                    return false;
-                }
-            })
+            return new Promise(resolve => {
+                looksame(croppedImg, storedImage, { strict: false }, async function (error, { equal }) {
+                    resolve(equal == true);
+                })
+            });
         });
-    }).catch(err => { console.log(err); });
+    }).catch(err => { console.log(err); return false; });
 }
 
 // not defined inline so a new version isn't made then called every iteration (which will probably eventually cause a stack overflow)
 // not sure if the JS optimizer is smart enough to make that not a problem but it's easier to just do it like this and know it will be fine.
-function waitForRegionMatch(resolve, command) {
+async function waitForRegionMatch(resolve, command) {
     if (checkForScreenshot(command)) {
         resolve();
     } else {
@@ -62,16 +59,20 @@ var commands = {
     "debug": async (command) => {
         console.log(command.note);
     },
+    "jump": async (command) => {
+        runCommands(markings[command.jumpName]);
+    },
     "checkregion": async (command) => {
-        var imageMatched = false;
-        if (checkForScreenshot(command)) {
-            imageMatched = true;
-        }
-        if (imageMatched == command.jumpOnMatch) {
-            runCommands(command.index + 1);
-        } else {
-            runCommands(markings[command.failJumpName]);
-        }
+        checkForScreenshot(command).then(matched => {
+            if (matched.toString() == command.jumpOnMatch) {
+                console.log("Jumping to " + command.jumpName);
+                console.log(inputCommands[markings[command.jumpName]]);
+                runCommands(markings[command.jumpName]);
+            } else {
+                console.log("Continuing to next item.");
+                runCommands(command.index + 1);
+            }
+        });
     },
     "wait": async (command) => { 
         // todo breaks if for less than mid double digits ms
@@ -107,7 +108,7 @@ function runCommands(index) {
         } else {
             // array of commands to NOT automatically run the next command with. 
             // these commands automatically handle running the next command on their own.
-            var blacklistedCommands = ['checkregion'];
+            var blacklistedCommands = ['checkregion', "jump"];
             commandToRun(value).then(() => {
                 // Somehow I want to take this out of here and put it into the functions themselves
                 // However, I need this to work now so I'm going to fix it later(tm)
@@ -134,11 +135,12 @@ function runCommands(index) {
     macroName = process.argv[2];
     if (process.argv[2] == undefined) {
         console.log("No macro name passed as an argument, using 'default'");
-        macroName = "default";
+        macroName = "lor3";
     }
     input = fs.readFileSync("playbackfiles/" + macroName + '/playbackfile.txt').toString().split("\n");
     for (var i = 0; i < input.length; i++) {
         try {
+            if (input[i] == '') { continue; } // Ignore blank lines
             var parsedInput = JSON.parse(input[i]);
             // handle marks
             if (parsedInput.type == "mark") {

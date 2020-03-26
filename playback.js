@@ -62,7 +62,7 @@ var commands = {
     "jump": async (command) => {
         runCommands(markings[command.jumpName]);
     },
-    "checkregion": async (command) => {
+    "conditionalJump": async (command) => {
         checkForScreenshot(command).then(matched => {
             if (matched.toString() == command.jumpOnMatch) {
                 console.log("Jumping to " + command.jumpName);
@@ -108,7 +108,7 @@ function runCommands(index) {
         } else {
             // array of commands to NOT automatically run the next command with. 
             // these commands automatically handle running the next command on their own.
-            var blacklistedCommands = ['checkregion', "jump"];
+            var blacklistedCommands = ['conditionalJump', "jump"];
             commandToRun(value).then(() => {
                 // Somehow I want to take this out of here and put it into the functions themselves
                 // However, I need this to work now so I'm going to fix it later(tm)

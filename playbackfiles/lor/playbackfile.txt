@@ -23,7 +23,6 @@
 
 {"type": "mark", "name": "click play now"}
 {"button":1,"clicks":2,"x":1573,"y":969,"type":"mouseup"}
-{"type":"wait","ms":2000}
 {"type": "jump", "jumpName": "process game"}
 
 
@@ -35,19 +34,16 @@
 
 {"type": "mark", "name": "click gear"}
 {"button":1,"clicks":4,"x":1837,"y":48,"type":"mouseup"}
-{"type":"wait","ms":2500}
 {"type": "jump", "jumpName": "process game"}
 
 
 {"type": "mark", "name": "surrender"}
 {"button":1,"clicks":5,"x":940,"y":910,"type":"mouseup"}
-{"type":"wait","ms":1000}
 {"type": "jump", "jumpName": "process game"}
 
 
 {"type": "mark", "name": "ok"}
 {"button":1,"clicks":6,"x":1109,"y":592,"type":"mouseup"}
-{"type":"wait","ms":1000}
 {"type": "jump", "name": "process game"}
 
 

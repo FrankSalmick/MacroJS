@@ -1,5 +1,5 @@
 # MacroJS
-MacroJS is a CLI macro recorder/player that supports waiting for content to appear on screen. It's written in NodeJS and is cross-platform. At this point it's almost ready to be called version 1, it just needs an easier install process.
+MacroJS is a CLI macro recorder/player that supports waiting for content to appear on screen. It's written in NodeJS and is cross-platform. At this point it's almost ready to be called version 1, it just needs an easier install process, and the editor needs a real frontend.
 
 # Screenshots
 
@@ -15,9 +15,9 @@ This macro waits for the image to appear before proceeding to the next operation
 
 ### Playback a macro (Conditional jumping)
 
-This macro will close the image if it is already open, and open the image if it is closed.
+This macro will right-click on the right side of the screen if it does not see the image, and right-click on the left side of the screen if it does see the image.
 
-![conditional jumping gif]()
+![conditional jumping gif](https://s5.gifyu.com/images/2020-03-28_01-49-39.gif)
 
 ### Record a macro
 

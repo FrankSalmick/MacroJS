@@ -1,10 +1,62 @@
-{"type":"regionmatch","filename":"1582002300576.png","locations":[{"x":1455,"y":914,"width":367,"height":134}]}
-{"button":1,"clicks":1,"x":1590,"y":957,"type":"mouseup"}
-{"type":"regionmatch","filename":"1582002284685.png","locations":[{"x":1821,"y":29,"width":52,"height":47}]}
-{"button":1,"clicks":2,"x":1851,"y":51,"type":"mouseup"}
-{"type":"wait","ms":836}
-{"button":1,"clicks":3,"x":886,"y":896,"type":"mouseup"}
-{"type":"wait","ms":591}
-{"button":1,"clicks":4,"x":1127,"y":610,"type":"mouseup"}
-{"type":"regionmatch","filename":"1582002296363.png","locations":[{"x":1194,"y":935,"width":163,"height":45}]}
-{"button":1,"clicks":5,"x":1225,"y":958,"type":"mouseup"}
+{"type": "mark", "name": "process game"}
+{"type":"wait","ms":500}
+{"type":"conditionalJump", "jumpName": "close teamviewer", "jumpOnMatch": "true", "filename":"1585202072901.png","locations":[{"x":730,"y":476,"width":45,"height":46}]}
+{"type":"conditionalJump", "jumpName": "continue to main menu", "jumpOnMatch": "true",  "filename":"1585173038835.png","locations":[{"x":1168,"y":921,"width":125,"height":38}]}
+{"type":"conditionalJump", "jumpName": "click play now", "jumpOnMatch": "true",  "filename":"1585172963082.png","locations":[{"x":1562,"y":946,"width":141,"height":58}]}
+{"type":"conditionalJump", "jumpName": "wait for queue", "jumpOnMatch": "true",  "filename":"1585179707693.png","locations":[{"x":887,"y":25,"width":140,"height":51}]}
+{"type":"conditionalJump", "jumpName": "select deck", "jumpOnMatch": "true", "filename":"1585202072901.png","locations":[{"x":228,"y":486,"width":127,"height":37}]}
+{"type":"conditionalJump", "jumpName": "error message", "filename":"1585361760261.png","locations":[{"x":873,"y":635,"width":172,"height":42}]}
+{"type":"conditionalJump", "jumpName": "surrender", "jumpOnMatch": "true","filename":"1585173007810.png","locations":[{"x":400,"y":661,"width":61,"height":49}]}
+{"type":"conditionalJump", "jumpName": "ok", "jumpOnMatch": "true",  "filename":"1585173010477.png","locations":[{"x":1044,"y":587,"width":101,"height":42}]}
+{"type":"conditionalJump", "jumpName": "click gear", "jumpOnMatch": "true", "filename":"1585172997056.png","locations":[{"x":342,"y":1009,"width":31,"height":42}]}
+{"type": "jump", "jumpName": "process game"}
+
+{"type": "mark", "name": "close teamviewer"}
+{ "button": 1, "clicks": 1, "x": 1133, "y": 580, "type": "mouseup" }
+{"type": "jump", "jumpName": "process game"}
+
+{"type": "mark", "name": "select deck"}
+{"button":1,"clicks":1,"x":642,"y":729,"type":"mouseup"}
+{"type":"wait","ms": "1500"}
+{"type": "jump", "jumpName": "process game"}
+
+
+{"type": "mark", "name": "click play now"}
+{"button":1,"clicks":2,"x":1573,"y":969,"type":"mouseup"}
+{"type":"wait","ms":2000}
+{"type": "jump", "jumpName": "process game"}
+
+
+{"type": "mark", "name": "wait for queue"}
+{"type":"regionmatch","filename":"1585384091558.png","locations":[{"x":345,"y":1019,"width":29,"height":28}]}
+{"type":"wait","ms":65000}
+{"type": "jump", "jumpName": "process game"}
+
+
+{"type": "mark", "name": "click gear"}
+{"button":1,"clicks":4,"x":1837,"y":48,"type":"mouseup"}
+{"type":"wait","ms":2500}
+{"type": "jump", "jumpName": "process game"}
+
+
+{"type": "mark", "name": "surrender"}
+{"button":1,"clicks":5,"x":940,"y":910,"type":"mouseup"}
+{"type":"wait","ms":1000}
+{"type": "jump", "jumpName": "process game"}
+
+
+{"type": "mark", "name": "ok"}
+{"button":1,"clicks":6,"x":1109,"y":592,"type":"mouseup"}
+{"type":"wait","ms":1000}
+{"type": "jump", "name": "process game"}
+
+
+{"type": "mark", "name": "error message"}
+{"button":1,"clicks":2,"x":924,"y":650,"type":"mouseup"}
+{"type": "jump", "name": "process game"}
+
+
+{"type": "mark", "name": "continue to main menu"}
+{"button":1,"clicks":7,"x":1251,"y":965,"type":"mouseup"}
+{"type":"conditionalJump", "jumpName": "continue to main menu", "jumpOnMatch": "true",  "filename":"1585173038835.png","locations":[{"x":1168,"y":921,"width":125,"height":38}]}
+{"type": "jump", "jumpName": "process game"}

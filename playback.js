@@ -13,7 +13,7 @@ var macroName;
 var inputCommands = [];
 
 // todo user configurable 
-var maxPlayback = 20;
+var maxPlayback = 200;
 var timeBetweenPlayback = 200; //ms
 
 async function handleClick(command) {
@@ -45,11 +45,13 @@ async function checkForScreenshot(command) {
 // not defined inline so a new version isn't made then called every iteration (which will probably eventually cause a stack overflow)
 // not sure if the JS optimizer is smart enough to make that not a problem but it's easier to just do it like this and know it will be fine.
 async function waitForRegionMatch(resolve, command) {
-    if (checkForScreenshot(command)) {
-        resolve();
-    } else {
-        waitForRegionMatch(resolve, command);
-    }
+    checkForScreenshot(command).then(result => {
+        if (result) {
+            resolve();
+        } else {
+            waitForRegionMatch(resolve, command);
+        }
+    })
 }
 
 var commands = {
@@ -66,7 +68,6 @@ var commands = {
         checkForScreenshot(command).then(matched => {
             if (matched.toString() == command.jumpOnMatch) {
                 console.log("Jumping to " + command.jumpName);
-                console.log(inputCommands[markings[command.jumpName]]);
                 runCommands(markings[command.jumpName]);
             } else {
                 console.log("Continuing to next item.");
@@ -135,7 +136,7 @@ function runCommands(index) {
     macroName = process.argv[2];
     if (process.argv[2] == undefined) {
         console.log("No macro name passed as an argument, using 'default'");
-        macroName = "lor3";
+        macroName = "default";
     }
     input = fs.readFileSync("playbackfiles/" + macroName + '/playbackfile.txt').toString().split("\n");
     for (var i = 0; i < input.length; i++) {

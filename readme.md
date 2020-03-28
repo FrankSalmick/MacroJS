@@ -21,7 +21,7 @@ This macro will right-click on the right side of the screen if it does not see t
 
 Here is the output at the very end, for reference:
 
-![final output](https://i.imgur.com/RhvQtlz.png | height=550)
+![final output](https://i.imgur.com/RhvQtlz.png)
 
 ### Record a macro
 

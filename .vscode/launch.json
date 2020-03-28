@@ -10,7 +10,8 @@
             "request": "launch",
             "name": "Launch Program",
             "skipFiles": [
-                "<node_internals>/**"
+                "<node_internals>/**",
+                "node_modules/*"
             ],
             "program": "${file}"
         }

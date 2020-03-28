@@ -5,45 +5,75 @@ const looksame = require('looks-same');
 const screenshot = require('screenshot-desktop');
 const sharp = require('sharp');
 const buttons = ["", "left", "right"];
+
+// globals
 var playbackCount = 1;
+var markings = {};
+var macroName;
+var inputCommands = [];
+
 // todo user configurable 
-var maxPlayback = 20;
+var maxPlayback = 200;
 var timeBetweenPlayback = 200; //ms
-var macroName = "lor2";
-var input;
 
 async function handleClick(command) {
     var mousePos = r.getMousePos(); 
     r.moveMouse(command['x'], command['y']);
     r.mouseClick(buttons[command['button']]);
-    r.moveMouse(mousePos['x'], mousePos['y']);
+    // r.moveMouse(mousePos['x'], mousePos['y']);
 }
 
-function checkForScreenshot(resolve, command) {
-    screenshot({format: 'png'}).then((img) => { 
+async function checkForScreenshot(command) {
+    return screenshot({format: 'png'}).then((img) => { 
         var locationData = command.locations[0];
-        sharp(img).extract({left: Number(locationData.x), top: Number(locationData.y), width: Number(locationData.width), height: Number(locationData.height)}).toBuffer().then(croppedImg => {
+        return sharp(img).extract({left: Number(locationData.x), top: Number(locationData.y), width: Number(locationData.width), height: Number(locationData.height)}).toBuffer().then(croppedImg => {
             var storedImage = fs.readFileSync("playbackfiles/" + macroName + "/images/" + command.filename + "-" + locationData.x + "-" + locationData.y + "-" + locationData.width + "-" + locationData.height);
             // debug:
             // fs.writeFileSync("stored.png", storedImage);
             // fs.writeFileSync("crop.png", croppedImg);
             // looksame.createDiff({ reference: storedImage, current: croppedImg, diff: 'testout23.png'}, (error) => {if (error) console.log(error); })
             // todo deal with minor differences between images (right now it's basically strict, except for exact color matching)
-            looksame(croppedImg, storedImage, {strict: false}, function(error, {equal}) { 
-                if (equal) {
-                    console.log("Matched.");
-                    resolve();
-                } else {
-                    checkForScreenshot(resolve, command);
-                }
-            })
+            return new Promise(resolve => {
+                looksame(croppedImg, storedImage, { strict: false }, async function (error, { equal }) {
+                    resolve(equal == true);
+                })
+            });
         });
-    }).catch(err => { console.log(err); });
+    }).catch(err => { console.log(err); return false; });
+}
+
+// not defined inline so a new version isn't made then called every iteration (which will probably eventually cause a stack overflow)
+// not sure if the JS optimizer is smart enough to make that not a problem but it's easier to just do it like this and know it will be fine.
+async function waitForRegionMatch(resolve, command) {
+    checkForScreenshot(command).then(result => {
+        if (result) {
+            resolve();
+        } else {
+            waitForRegionMatch(resolve, command);
+        }
+    })
 }
 
 var commands = {
     "note": async (command) => {
         // do nothing
+    },
+    "debug": async (command) => {
+        console.log(command.note);
+    },
+    "jump": async (command) => {
+        runCommands(markings[command.jumpName]);
+    },
+    "conditionalJump": async (command) => {
+        checkForScreenshot(command).then(matched => {
+            if (matched.toString() == command.jumpOnMatch) {
+                console.log("Jumping to " + command.jumpName);
+                runCommands(markings[command.jumpName]);
+            } else {
+                console.log("Continuing to next item.");
+                runCommands(command.index + 1);
+            }
+        });
     },
     "wait": async (command) => { 
         // todo breaks if for less than mid double digits ms
@@ -58,7 +88,7 @@ var commands = {
     "mouseup": handleClick,
     "regionmatch": async (command) => {
         console.log("|------------     Matching  region     ------------|");
-        return new Promise(resolve => checkForScreenshot(resolve, command));
+        return new Promise(resolve => waitForRegionMatch(resolve, command));
     },
     "movemouse": async (command) => { r.moveMouse(command['x'], command['y']); },
     "keydown": async (command) => { r.keyToggle(keycode(command.rawcode), "down"); },
@@ -69,10 +99,25 @@ var commands = {
 // This will go until it hits a wait. The wait will run the next runCommands() in a setTimeout, which will run all commands until the next wait.
 // It's kind of like strtok
 function runCommands(index) {
-    var value = input[index];
+    var value = inputCommands[index];
     if (value != undefined && value['type'] != undefined) {
         console.log(value);
-        commands[value["type"]](value).then(() => runCommands(index + 1));
+        var commandToRun = commands[value["type"]];
+        if (commandToRun == undefined) {
+            console.log("Warning: Invalid command type! Nothing ran.");
+            runCommands(index + 1);
+        } else {
+            // array of commands to NOT automatically run the next command with. 
+            // these commands automatically handle running the next command on their own.
+            var blacklistedCommands = ['conditionalJump', "jump"];
+            commandToRun(value).then(() => {
+                // Somehow I want to take this out of here and put it into the functions themselves
+                // However, I need this to work now so I'm going to fix it later(tm)
+                if (blacklistedCommands.indexOf(value.type) == -1) {
+                    runCommands(index + 1);
+                }
+            });
+        }
     }
     else {
         playbackCount++;
@@ -93,15 +138,23 @@ function runCommands(index) {
         console.log("No macro name passed as an argument, using 'default'");
         macroName = "default";
     }
-    input = fs.readFileSync("playbackfiles/" + macroName + '/playbackfile.txt');
-    input = input.toString().split("\n");
+    input = fs.readFileSync("playbackfiles/" + macroName + '/playbackfile.txt').toString().split("\n");
     for (var i = 0; i < input.length; i++) {
         try {
-            var temp = JSON.parse(input[i]);
-            input[i] = temp;
+            if (input[i] == '') { continue; } // Ignore blank lines
+            var parsedInput = JSON.parse(input[i]);
+            // handle marks
+            if (parsedInput.type == "mark") {
+                // assumption: all marks are succeeded by a command
+                // because length = the index of the last item + 1, we don't have to add 1.
+                markings[parsedInput.name] = inputCommands.length;   
+            }
+            else {
+                parsedInput["index"] = inputCommands.length;
+                inputCommands[inputCommands.length] = parsedInput;
+            }
         } catch (e) {
-            input.splice(i);
-            i--;
+            console.log(e);
         }
     }
     runCommands(0);

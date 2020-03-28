@@ -136,12 +136,12 @@ function runCommands(index) {
     macroName = process.argv[2];
     if (process.argv[2] == undefined) {
         console.log("No macro name passed as an argument, using 'default'");
-        macroName = "default";
+        macroName = "lor";
     }
     input = fs.readFileSync("playbackfiles/" + macroName + '/playbackfile.txt').toString().split("\n");
     for (var i = 0; i < input.length; i++) {
         try {
-            if (input[i] == '') { continue; } // Ignore blank lines
+            if (input[i] == '' || input[i] == '\r') { continue; } // Ignore blank lines
             var parsedInput = JSON.parse(input[i]);
             // handle marks
             if (parsedInput.type == "mark") {

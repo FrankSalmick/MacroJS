@@ -29,7 +29,7 @@
 
 {"type": "mark", "name": "wait for queue"}
 {"type":"regionmatch","filename":"1585384091558.png","locations":[{"x":345,"y":1019,"width":29,"height":28}]}
-{"type":"wait","ms":65000}
+{"type":"wait","ms":45000}
 {"type": "jump", "jumpName": "process game"}
 
 

@@ -19,9 +19,7 @@ This macro will right-click on the right side of the screen if it does not see t
 
 ![conditional jumping gif](https://s5.gifyu.com/images/2020-03-28_02-45-57.gif)
 
-Here is the output at the very end, for reference:
-
-![final output](https://i.imgur.com/RhvQtlz.png)
+[Here is the output at the very end, for reference](https://i.imgur.com/RhvQtlz.png)
 
 ### Record a macro
 

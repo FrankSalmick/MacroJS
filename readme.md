@@ -80,6 +80,25 @@ This statement will always print out "First". Then, it will take a screenshot an
 
 In order for this command to function, the editor must be used. This is because the image is pre-cropped to prevent a second expensive cropping operation every time a comparison is made. I'll add more information about how to do this later.
 
+### FlagJump
+
+FlagJump will jump if MacroJS was launched with a specific flag. When launching MacroJS, add a flag by adding it to the end of the command. Flags are seperated by spaces and optionally start with a `-`. If the flag starts with a `-`, it will be stripped. Example:
+
+```
+{ "type": "mark", "name": "Pre-debug statement" }
+{ "type": "debug", "note": "First" }
+{ "type": "flagJump", "flagName": "nosecond", "jumpName": "Pre-debug statement"}
+{ "type": "debug", "note": "Second" }
+```
+
+If MacroJS was launched like this:
+
+```
+node playback.js name -noSecond
+```
+
+The macro will continuously print First. If it was launched without the extra argument, it will print First, then Second. As you can see in the example, flag names are not case sensitive. 
+
 ### Wait
 
 Wait will pause for any number of milliseconds before continuing to the next command. Example:

@@ -11,16 +11,20 @@ var playbackCount = 1;
 var markings = {};
 var macroName;
 var inputCommands = [];
+var flags = [];
 
 // todo user configurable 
-var maxPlayback = 200;
+// -1 for infinite 
+var maxPlayback = -1;
 var timeBetweenPlayback = 200; //ms
 
 async function handleClick(command) {
     var mousePos = r.getMousePos(); 
     r.moveMouse(command['x'], command['y']);
-    r.mouseClick(buttons[command['button']]);
-    // r.moveMouse(mousePos['x'], mousePos['y']);
+    setTimeout(() => {
+        r.mouseClick(buttons[command['button']]);
+        r.moveMouse(mousePos['x'], mousePos['y']);
+    }, 20);
 }
 
 async function checkForScreenshot(command) {
@@ -63,6 +67,11 @@ var commands = {
     },
     "jump": async (command) => {
         runCommands(markings[command.jumpName]);
+    },
+    "flagJump": async (command) => {
+        if (flags.indexOf(command.flagName) != -1) {
+            runCommands(markings[command.jumpName.toLowerCase()]);
+        }
     },
     "conditionalJump": async (command) => {
         checkForScreenshot(command).then(matched => {
@@ -121,7 +130,7 @@ function runCommands(index) {
     }
     else {
         playbackCount++;
-        if (playbackCount <= maxPlayback) {
+        if (maxPlayback == -1 || playbackCount <= maxPlayback) {
             console.log("Waiting " + timeBetweenPlayback + "ms (will be iteration " + playbackCount + "/" + maxPlayback + ").");
             commands["wait"]({"ms": timeBetweenPlayback}).then(() => runCommands(0));
         }
@@ -139,6 +148,13 @@ function runCommands(index) {
         macroName = "lor";
     }
     input = fs.readFileSync("playbackfiles/" + macroName + '/playbackfile.txt').toString().split("\n");
+    for (var i = 3; i < process.argv.length; i++) {
+        if (process.argv[i][0] == '-') {
+            flags.push(process.argv[i].substr(1).toLowerCase());
+        } else {
+            flags.push(process.argv[i].toLowerCase());
+        }
+    }
     for (var i = 0; i < input.length; i++) {
         try {
             if (input[i] == '' || input[i] == '\r') { continue; } // Ignore blank lines

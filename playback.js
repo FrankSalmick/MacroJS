@@ -23,8 +23,8 @@ async function handleClick(command) {
     r.moveMouse(command['x'], command['y']);
     setTimeout(() => {
         r.mouseClick(buttons[command['button']]);
-        r.moveMouse(mousePos['x'], mousePos['y']);
-    }, 20);
+        // r.moveMouse(mousePos['x'], mousePos['y']);
+    }, 40);
 }
 
 async function checkForScreenshot(command) {
@@ -118,7 +118,7 @@ function runCommands(index) {
         } else {
             // array of commands to NOT automatically run the next command with. 
             // these commands automatically handle running the next command on their own.
-            var blacklistedCommands = ['conditionalJump', "jump"];
+            var blacklistedCommands = ['conditionalJump', "jump", "flagJump"];
             commandToRun(value).then(() => {
                 // Somehow I want to take this out of here and put it into the functions themselves
                 // However, I need this to work now so I'm going to fix it later(tm)

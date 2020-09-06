@@ -21,6 +21,8 @@ This macro will right-click on the right side of the screen if it does not see t
 
 [Here is the output at the very end, for reference](https://i.imgur.com/RhvQtlz.png)
 
+I plan on updating this section with more details once I release version 1.0.
+
 ### Record a macro
 
 ![record.js screenshot](https://i.imgur.com/hBSvVyo.png)

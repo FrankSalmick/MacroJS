@@ -1,5 +1,5 @@
 # MacroJS
-MacroJS is a CLI macro recorder/player that supports waiting for content to appear on screen. It's written in NodeJS and is cross-platform. At this point it's almost ready to be called version 1, it just needs an easier install process, and the editor needs a real frontend.
+MacroJS is a CLI macro recorder/player that is capable of analyzing and adapting to the content on the screen. It's written in NodeJS and is cross-platform. At this point it's almost ready to be called version 1, it just needs an easier install process, and the editor needs a real frontend.
 
 # Screenshots
 
@@ -31,7 +31,7 @@ I plan on updating this section with more details once I release version 1.0.
 
 ### Commands
 
-- `node record.js <macron ame>` to record a macro. This will create a folder `playbackfiles/<macroname>`. This folder contains a file named `playbackfile.txt`, which is where your macro is saved (syntax and examples are in the [section below](#Playbackfile-syntax)). 
+- `node record.js <macro name>` to record a macro. This will create a folder `playbackfiles/<macroname>`. This folder contains a file named `playbackfile.txt`, which is where your macro is saved (syntax and examples are in the [section below](#Playbackfile-syntax)). 
 - `node playback.js <macro name>` to playback a macros (will read `playbackfile.txt` in `playbackfiles/<macro name>`).
 - `npm start` to start the advanced macro editor (must be inside the /editor directory)
   - The macro editor will output a command you can insert into your playback file located in `playbackfiles/<macro name>/playbackfile.txt`. This playback file is also how you modify your macros. At this point I don't plan to expand the purpose of the editor.
